@@ -1,8 +1,18 @@
 import React, { Component } from "react";
 import { CONTRACT_ABI, CONTRACT_ADDRESS } from "./config";
 import Web3 from "web3";
-import "./App.css";
 
+// Material imports
+import { makeStyles } from "@material-ui/core/styles";
+import AppBar from "@material-ui/core/AppBar";
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
+import Typography from "@material-ui/core/Typography";
+import Box from "@material-ui/core/Box";
+import Toolbar from "@material-ui/core/Toolbar";
+import PropTypes from "prop-types";
+import CreateProjectForm from "./CreateProjectForm";
+import ListOfProjects from "./ListOfProjects";
 class App extends Component {
   componentWillMount() {
     this.loadBlockchainData();
@@ -12,195 +22,106 @@ class App extends Component {
     const web3 = new Web3(Web3.givenProvider || "http://localhost:8545");
     console.log("web3", web3);
     const accounts = await web3.eth.getAccounts();
-    console.log("accounts", accounts);
-    this.setState({ account: accounts[0] });
-    const contract = new web3.eth.Contract(CONTRACT_ABI, CONTRACT_ADDRESS);
+    const account = accounts[0];
+
+    window.account = account;
     window.contract = new web3.eth.Contract(CONTRACT_ABI, CONTRACT_ADDRESS);
-
-    this.setState({ contract });
-    let projects = [];
-    const projectCount = Number(
-      await contract.methods.getProjectCount().call()
-    );
-    let indexes;
-    if (projectCount === 0) {
-      indexes = [];
-    } else {
-      indexes = Array.from(Array(projectCount - 1), (_, index) => index);
-    }
-    const promises = indexes.map(async index => {
-      const project = await contract.methods.projects(index).call();
-      projects.push(project);
-    });
-    await Promise.all(promises);
-    projects = projects.map((project, index) => ({ ...project, index }));
-    this.setState({ projects });
-  }
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      account: "",
-      projects: [],
-      projectName: undefined,
-      amount: undefined,
-      days: undefined
-    };
-  }
-
-  handleInputChange = event => {
-    const { value, name } = event.target;
-    this.setState({
-      [name]: value
-    });
-  };
-
-  createProject = async () => {
-    const { projectName, amount, days } = this.state;
-    await window.contract.methods
-      .createProject(projectName, amount, days)
-      .send({ from: this.state.account, gas: 5000000 });
-    console.log(projectName, amount, days);
-  };
-
-  pay = async index => {
-    console.log("pay", index);
-    await window.contract.methods
-      .contribute(index, 1)
-      .send({ from: this.state.account, gas: 5000000 });
-  };
-
-  audit = async index => {
-    console.log("audit", index);
-    await window.contract.methods.verifyProject(index).send({ from: this.state.account, gas: 5000000 });
-  };
-
-  renderCreateProject() {
-    return (
-      <div>
-        <h2>Create Project</h2>
-        <div>
-          <input
-            id="projectName"
-            name="projectName"
-            fullWidth
-            className="input"
-            placeholder="Project's name"
-            onChange={this.handleInputChange}
-            autoFocus
-          />
-        </div>
-        <div>
-          <input
-            id="amount"
-            name="amount"
-            fullWidth
-            type="number"
-            className="input"
-            placeholder="Requested amount"
-            onChange={this.handleInputChange}
-          />
-        </div>
-        <div>
-          <input
-            id="days"
-            name="days"
-            fullWidth
-            type="number"
-            className="input"
-            placeholder="Duration"
-            onChange={this.handleInputChange}
-          />
-        </div>
-        <button
-          variant="contained"
-          color="primary"
-          onClick={this.createProject.bind(this)}
-        >
-          Create Project
-        </button>
-      </div>
-    );
-  }
-
-  getProjectState(projectStateNumber){
-    switch (projectStateNumber){
-      case "0":
-        return "Closed"
-      case "1":
-        return "Open"
-      case "2":
-        return "Canceled"
-      default:
-          return ""
-    }
-    ;
-  }
-
-  renderProjectItem(project) {
-    console.log("project", project);
-
-    const creationDate = new Date(0);
-    creationDate.setUTCSeconds(project.creationDate);
-
-    const endDate = new Date(0);
-    endDate.setUTCSeconds(project.endDate);
-
-    return (
-      <tr key={project.index}>
-        <td>{project.index}</td>
-        <td>{project.name}</td>
-        <td>{creationDate.toDateString()}</td>
-        <td>{endDate.toDateString()}</td>
-        <td>{project.amount}</td>
-        <td>{project.moneyFunded}</td>
-        <td>{this.getProjectState(project.state)}</td>
-        <td>
-          <button onClick={() => this.pay(project.index)}>Contribute</button>
-        </td>
-        <td>
-          <button onClick={() => this.audit(project.index)}>Audit</button>
-        </td>
-      </tr>
-    );
-  }
-
-  renderProjectList() {
-    const { projects } = this.state;
-    console.log("projects", projects);
-    return (
-      <div>
-        <h2>Project List</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Index</th>
-              <th>Name</th>
-              <th>Created</th>
-              <th>End</th>
-              <th>Requested</th>
-              <th>Obtained</th>
-              <th>State</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {projects.map(project => this.renderProjectItem(project))}
-          </tbody>
-        </table>
-      </div>
-    );
   }
 
   render() {
-    return (
-      <div className="container">
-        <h1>TP2 Celdas</h1>
-        {this.renderCreateProject()}
-        {this.renderProjectList()}
-      </div>
-    );
+    return <AppTabs />;
   }
+}
+
+// Other Material Components
+
+const useStyles = makeStyles(theme => ({
+  root: {
+    flexGrow: 1,
+    backgroundColor: theme.palette.background.paper
+  },
+  title: {
+    flexGrow: 1
+  },
+  container: {
+    display: "flex",
+    flexWrap: "wrap"
+  },
+  textField: {
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
+    width: 200
+  },
+  button: {
+    margin: theme.spacing(1),
+    height: 40,
+    marginTop: 20
+  }
+}));
+
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <Typography
+      component="div"
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      <Box p={3}>{children}</Box>
+    </Typography>
+  );
+}
+
+TabPanel.propTypes = {
+  children: PropTypes.node,
+  index: PropTypes.any.isRequired,
+  value: PropTypes.any.isRequired
+};
+
+function a11yProps(index) {
+  return {
+    id: `simple-tab-${index}`,
+    "aria-controls": `simple-tabpanel-${index}`
+  };
+}
+
+function AppTabs() {
+  const classes = useStyles();
+  const [value, setValue] = React.useState(0);
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+
+  return (
+    <div className={classes.root}>
+      <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h6" className={classes.title}>
+            TP2 Celdas
+          </Typography>
+        </Toolbar>
+        <Tabs
+          value={value}
+          onChange={handleChange}
+          aria-label="simple tabs example"
+        >
+          <Tab label="Create Project" {...a11yProps(0)} />
+          <Tab label="Project List" {...a11yProps(1)} />
+        </Tabs>
+      </AppBar>
+      <TabPanel value={value} index={0}>
+        <CreateProjectForm />
+      </TabPanel>
+      <TabPanel value={value} index={1}>
+        <ListOfProjects />
+      </TabPanel>
+    </div>
+  );
 }
 
 export default App;
