@@ -91,13 +91,6 @@ class ListOfProjects extends Component {
     //   .send({ from: window.account, gas: 5000000 });
   };
 
-  audit = async index => {
-    console.log("audit", index);
-    await window.contract.methods
-      .verifyProject(index)
-      .send({ from: window.account, gas: 5000000 });
-  };
-
   getProjectState(projectStateNumber) {
     switch (projectStateNumber) {
       case "0":
@@ -124,8 +117,8 @@ class ListOfProjects extends Component {
       name: project.name,
       created: createdDate.toDateString(),
       end: endDate.toDateString(),
-      requested: project.amount,
-      obtained: project.moneyFunded,
+      requested: project.amount / 10 ** 18,
+      obtained: project.moneyFunded / 10 ** 18,
       state: this.getProjectState(project.state)
     };
   };
@@ -148,9 +141,13 @@ class ListOfProjects extends Component {
       return;
     }
 
-    await window.contract.methods
-      .contribute(index, amount)
-      .send({ from: window.account, gas: 5000000, value: 10000 });
+    const ETHToWeiAmount = `${amount * 10 ** 18}`;
+
+    await window.contract.methods.contribute(index, ETHToWeiAmount).send({
+      from: window.account,
+      gas: 5000000,
+      value: ETHToWeiAmount
+    });
 
     await this.loadProjectsData();
     this.setState({
@@ -183,26 +180,19 @@ class ListOfProjects extends Component {
         <MaterialTable
           title="Projects"
           columns={[
+            { title: "Name", field: "name" },
             { title: "Created date", field: "created" },
             { title: "End date", field: "end" },
             { title: "Requested", field: "requested" },
             { title: "Obtained", field: "obtained" },
             { title: "State", field: "state" }
-            // {title:"Actions", field:},
           ]}
           actions={[
             {
-              icon: "save",
-              tooltip: "Save User",
+              icon: "✚",
+              tooltip: "Support Project",
               onClick: (_, rowData) => {
                 this.handleOnClickSend(rowData.index);
-              }
-            },
-            {
-              icon: "audit",
-              tooltip: "audit",
-              onClick: (_, rowData) => {
-                this.audit(rowData.index);
               }
             }
           ]}

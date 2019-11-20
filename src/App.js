@@ -19,11 +19,11 @@ class App extends Component {
   }
 
   async loadBlockchainData() {
-    const web3 = new Web3(Web3.givenProvider || "http://localhost:8545");
+    const web3 = new Web3(Web3.givenProvider || "http://127.0.0.1:7545");
     console.log("web3", web3);
     const accounts = await web3.eth.getAccounts();
-    const account = accounts[0];
-
+    const account = "0xa1B57e505D2c3Ceb128fA07fdBA4b0d47EF1F57c";
+    window.web3 = web3;
     window.account = account;
     window.contract = new web3.eth.Contract(CONTRACT_ABI, CONTRACT_ADDRESS);
 

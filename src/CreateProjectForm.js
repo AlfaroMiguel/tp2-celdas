@@ -48,8 +48,9 @@ class CreateProjectForm extends Component {
     console.log("createProject");
     console.log("projectName, amount, duration");
     console.log(projectName, amount, duration);
+    const ETHToWeiAmount = `${amount * 10 ** 18}`;
     await window.contract.methods
-      .createProject(projectName, amount, duration)
+      .createProject(projectName, ETHToWeiAmount, duration)
       .send({ from: window.account, gas: 5000000 });
   };
 
@@ -75,7 +76,7 @@ class CreateProjectForm extends Component {
             id="amount"
             name="amount"
             className={classes.textField}
-            label="Amount Needed"
+            label="Amount Needed (ETH)"
             margin="normal"
             type="number"
             onChange={this.handleInputChange}

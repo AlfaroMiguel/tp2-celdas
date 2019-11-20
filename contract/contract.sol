@@ -1,8 +1,9 @@
 pragma solidity ^0.5.0;
 
+import "github.com/OpenZeppelin/zeppelin-solidity/contracts/ownership/Ownable.sol";
 import "./SafeMath.sol";
 
-contract ProjectFactory {
+contract ProjectFactory is Ownable {
     using SafeMath for uint256;
 
     enum States { CLOSE, OPEN, CANCELED }
@@ -30,7 +31,8 @@ contract ProjectFactory {
     }
 
     function createProject(string memory _name, uint _amount, uint _days) public {
-        Project memory project = Project(_name, _amount, now, uint(now + _days * 86400), States.OPEN, 0, new address payable[](10));
+        address payable[] memory contributors;
+        Project memory project = Project(_name, _amount, now, uint(now + _days * 86400), States.OPEN, 0, contributors);
         uint id = projects.push(project) - 1;
         projectsToOwner[id] = msg.sender;
         ownerProjectsCount[msg.sender]++;
@@ -38,18 +40,12 @@ contract ProjectFactory {
     }
 
     function contribute(uint _projectId, uint _amount) public payable {
-        address payable contributor = msg.sender;
-        uint amountFunded = _amount;
-
-        Project storage project = projects[_projectId];
-        if(project.contributors[contributor] == 0) {
-            project.contributorsAddresses.push(contributor);
-        }
-        project.contributors[contributor] += amountFunded;
-        project.moneyFunded += amountFunded;
+        projects[_projectId].moneyFunded += _amount;
+        projects[_projectId].contributorsAddresses.push(msg.sender);
+        projects[_projectId].contributors[msg.sender] += _amount;
         verifyProject(_projectId);
     }
-
+    
     function getMoneyFunded(uint _projectId) public view returns (uint){
         return projects[_projectId].moneyFunded;
     }
@@ -59,7 +55,6 @@ contract ProjectFactory {
         if(project.moneyFunded >= project.amount) {
             project.state = States.CLOSE;
             projectsToOwner[_projectId].transfer(project.moneyFunded);
-            project.moneyFunded = 0;
         } else if(now > project.endDate) {
             project.state = States.CANCELED;
             for (uint index = 0; index < project.contributorsAddresses.length; index++) {
