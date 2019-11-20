@@ -30,7 +30,7 @@ contract ProjectFactory {
     }
 
     function createProject(string memory _name, uint _amount, uint _days) public {
-        Project memory project = Project(_name, _amount, now, uint(now + _days), States.OPEN, 0, new address payable[](10));
+        Project memory project = Project(_name, _amount, now, uint(now + _days * 86400), States.OPEN, 0, new address payable[](10));
         uint id = projects.push(project) - 1;
         projectsToOwner[id] = msg.sender;
         ownerProjectsCount[msg.sender]++;

@@ -26,6 +26,9 @@ class App extends Component {
 
     window.account = account;
     window.contract = new web3.eth.Contract(CONTRACT_ABI, CONTRACT_ADDRESS);
+
+    console.log("account", window.account);
+    console.log("contract", window.contract);
   }
 
   render() {

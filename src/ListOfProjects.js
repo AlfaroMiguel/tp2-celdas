@@ -29,17 +29,21 @@ class ListOfProjects extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      projects: []
+      projects: undefined
     };
   }
 
-  componentWillMount() {
-    this.loadProjectsData();
+  componentWillUpdate() {
+    const { projects } = this.state;
+    if (!projects) {
+      this.loadProjectsData();
+    }
   }
 
   async loadProjectsData() {
     if (!window.contract) {
-      // Contarct not found
+      // Contract not found (nothing we can do)
+      console.log("Contract not found");
       return;
     }
 
@@ -59,6 +63,7 @@ class ListOfProjects extends Component {
     });
     await Promise.all(promises);
     projects = projects.map((project, index) => ({ ...project, index }));
+    console.log("projects", projects);
     this.setState({ projects });
   }
 
@@ -89,17 +94,30 @@ class ListOfProjects extends Component {
     }
   }
 
-  createData(name, created, end, requested, obtained, state) {
-    return { name, created, end, requested, obtained, state };
-  }
+  createData = project => {
+    console.log("project", project);
+    const createdDate = new Date(0);
+    createdDate.setUTCSeconds(project.creationDate);
+
+    const endDate = new Date(0);
+    endDate.setUTCSeconds(project.endDate);
+
+    return {
+      index: project.index,
+      name: project.name,
+      created: createdDate.toDateString(),
+      end: endDate.toDateString(),
+      requested: project.amount,
+      obtained: project.moneyFunded,
+      state: this.getProjectState(project.state)
+    };
+  };
 
   render() {
     const { classes } = this.props;
+    const { projects } = this.state;
 
-    const rows = [
-      this.createData("Mike's project", 13123124, 1223123123, 200, 100, 0),
-      this.createData("FIUBA's project", 13123124, 1223123123, 200, 100, 0)
-    ];
+    const rows = projects && projects.map(this.createData);
 
     return (
       <Paper className={classes.root}>
@@ -116,32 +134,33 @@ class ListOfProjects extends Component {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map(row => (
-              <TableRow key={row.name}>
-                <TableCell component="th" scope="row">
-                  {row.name}
-                </TableCell>
-                <TableCell align="right">{row.created}</TableCell>
-                <TableCell align="right">{row.end}</TableCell>
-                <TableCell align="right">{row.requested}</TableCell>
-                <TableCell align="right">{row.obtained}</TableCell>
-                <TableCell align="right">{row.state}</TableCell>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  className={classes.button}
-                >
-                  Send
-                </Button>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  className={classes.button}
-                >
-                  Audit
-                </Button>
-              </TableRow>
-            ))}
+            {rows &&
+              rows.map(row => (
+                <TableRow key={row.name}>
+                  <TableCell component="th" scope="row">
+                    {row.name}
+                  </TableCell>
+                  <TableCell align="right">{row.created}</TableCell>
+                  <TableCell align="right">{row.end}</TableCell>
+                  <TableCell align="right">{row.requested}</TableCell>
+                  <TableCell align="right">{row.obtained}</TableCell>
+                  <TableCell align="right">{row.state}</TableCell>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    className={classes.button}
+                  >
+                    Send
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    className={classes.button}
+                  >
+                    Audit
+                  </Button>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </Paper>
