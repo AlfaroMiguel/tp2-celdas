@@ -22,6 +22,10 @@ export default class SendDialog extends React.PureComponent {
   };
 
   handleClose = () => {
+    this.props.onClose();
+  };
+
+  handleSubmit = () => {
     this.props.onClose(this.state.amount);
   };
 
@@ -55,7 +59,7 @@ export default class SendDialog extends React.PureComponent {
           <Button onClick={this.handleClose} color="primary">
             Cancel
           </Button>
-          <Button onClick={this.handleClose} color="primary">
+          <Button onClick={this.handleSubmit} color="primary">
             Ok
           </Button>
         </DialogActions>
