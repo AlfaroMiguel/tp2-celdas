@@ -75,7 +75,7 @@ class CreateProjectForm extends Component {
             id="amount"
             name="amount"
             className={classes.textField}
-            label="Amount Needed (ETH)"
+            label="Amount Needed"
             margin="normal"
             type="number"
             onChange={this.handleInputChange}

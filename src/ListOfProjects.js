@@ -9,11 +9,23 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
+import Modal from "@material-ui/core/Modal";
+import TextField from "@material-ui/core/TextField";
 
 const styles = theme => ({
   root: {
     width: "100%",
     overflowX: "auto"
+  },
+  paper: {
+    position: "absolute",
+    width: 400,
+    backgroundColor: "white",
+    border: "4px solid #FFF",
+    color: "black",
+    top: "40%",
+    left: "40%",
+    padding: "20 20 20 20"
   },
   table: {
     minWidth: 650
@@ -22,6 +34,10 @@ const styles = theme => ({
     margin: 10,
     height: 40,
     marginTop: 20
+  },
+  modal: {
+    top: "50%",
+    left: "50%"
   }
 });
 
@@ -29,7 +45,8 @@ class ListOfProjects extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      projects: undefined
+      projects: undefined,
+      sendModalOpen: false
     };
   }
 
@@ -67,11 +84,12 @@ class ListOfProjects extends Component {
     this.setState({ projects });
   }
 
-  send = async index => {
+  handleOnClickSend = async index => {
     console.log("send", index);
-    await window.contract.methods
-      .contribute(index, 1)
-      .send({ from: window.account, gas: 5000000 });
+    this.setState({ sendModalOpen: true });
+    // await window.contract.methods
+    //   .contribute(index, 1)
+    //   .send({ from: window.account, gas: 5000000 });
   };
 
   audit = async index => {
@@ -113,14 +131,42 @@ class ListOfProjects extends Component {
     };
   };
 
+  renderSendModal() {
+    const { classes } = this.props;
+    const { sendModalOpen } = this.state;
+    return (
+      <Modal
+        aria-labelledby="simple-modal-title"
+        aria-describedby="simple-modal-description"
+        open={sendModalOpen}
+      >
+        <div className={classes.paper}>
+          <h2 id="simple-modal-title">Support Project</h2>
+          <p id="simple-modal-description">
+            How much Gas do you want to send to this project?
+          </p>
+          <TextField
+            id="amount"
+            name="amount"
+            className={classes.textField}
+            label="Amount"
+            margin="normal"
+            type="number"
+          />
+        </div>
+      </Modal>
+    );
+  }
+
   render() {
     const { classes } = this.props;
-    const { projects } = this.state;
+    const { projects, sendModalOpen } = this.state;
 
     const rows = projects && projects.map(this.createData);
 
     return (
       <Paper className={classes.root}>
+        {this.renderSendModal()}
         <Table className={classes.table} aria-label="simple table">
           <TableHead>
             <TableRow>
@@ -149,6 +195,7 @@ class ListOfProjects extends Component {
                     variant="contained"
                     color="primary"
                     className={classes.button}
+                    onClick={this.handleOnClickSend}
                   >
                     Send
                   </Button>
