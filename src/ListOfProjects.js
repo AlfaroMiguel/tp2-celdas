@@ -9,8 +9,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
-import Modal from "@material-ui/core/Modal";
-import TextField from "@material-ui/core/TextField";
+import SendDialog from "./SendDialog";
 
 const styles = theme => ({
   root: {
@@ -131,36 +130,37 @@ class ListOfProjects extends Component {
     };
   };
 
+  handleClose = () => {
+    this.setState({
+      ...this.state,
+      sendModalOpen: false
+    });
+  };
+
+  handleSubmit = amount => {
+    this.setState({
+      ...this.state,
+      sendModalOpen: false
+    });
+
+    // AGREGA EL CODIGO DE SEND ACA
+  };
+
   renderSendModal() {
     const { classes } = this.props;
     const { sendModalOpen } = this.state;
     return (
-      <Modal
-        aria-labelledby="simple-modal-title"
-        aria-describedby="simple-modal-description"
-        open={sendModalOpen}
-      >
-        <div className={classes.paper}>
-          <h2 id="simple-modal-title">Support Project</h2>
-          <p id="simple-modal-description">
-            How much Gas do you want to send to this project?
-          </p>
-          <TextField
-            id="amount"
-            name="amount"
-            className={classes.textField}
-            label="Amount"
-            margin="normal"
-            type="number"
-          />
-        </div>
-      </Modal>
+      <SendDialog
+        sendModalOpen={sendModalOpen}
+        classes={classes}
+        onClose={this.handleSubmit}
+      />
     );
   }
 
   render() {
     const { classes } = this.props;
-    const { projects, sendModalOpen } = this.state;
+    const { projects } = this.state;
 
     const rows = projects && projects.map(this.createData);
 

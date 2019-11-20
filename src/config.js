@@ -1,6 +1,88 @@
-export const CONTRACT_ADDRESS = "0x0bC9b5000C5EB6Bab2bD57A1BB1EB8Eb485cCE3c";
+export const CONTRACT_ADDRESS = "0x6d806ee3620bf446526Af99CD7567D2619d8fd3d";
 
 export const CONTRACT_ABI = [
+  {
+    constant: true,
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256"
+      }
+    ],
+    name: "projects",
+    outputs: [
+      {
+        internalType: "string",
+        name: "name",
+        type: "string"
+      },
+      {
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256"
+      },
+      {
+        internalType: "uint256",
+        name: "creationDate",
+        type: "uint256"
+      },
+      {
+        internalType: "uint256",
+        name: "endDate",
+        type: "uint256"
+      },
+      {
+        internalType: "enum ProjectFactory.States",
+        name: "state",
+        type: "uint8"
+      },
+      {
+        internalType: "uint256",
+        name: "moneyFunded",
+        type: "uint256"
+      }
+    ],
+    payable: false,
+    stateMutability: "view",
+    type: "function"
+  },
+  {
+    constant: true,
+    inputs: [],
+    name: "getProjectCount",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256"
+      }
+    ],
+    payable: false,
+    stateMutability: "view",
+    type: "function"
+  },
+  {
+    constant: true,
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_projectId",
+        type: "uint256"
+      }
+    ],
+    name: "getMoneyFunded",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256"
+      }
+    ],
+    payable: false,
+    stateMutability: "view",
+    type: "function"
+  },
   {
     constant: false,
     inputs: [
@@ -14,6 +96,42 @@ export const CONTRACT_ABI = [
     outputs: [],
     payable: true,
     stateMutability: "payable",
+    type: "function"
+  },
+  {
+    constant: true,
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256"
+      }
+    ],
+    name: "projectsToOwner",
+    outputs: [
+      {
+        internalType: "address payable",
+        name: "",
+        type: "address"
+      }
+    ],
+    payable: false,
+    stateMutability: "view",
+    type: "function"
+  },
+  {
+    constant: false,
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_projectId",
+        type: "uint256"
+      }
+    ],
+    name: "verifyProject",
+    outputs: [],
+    payable: false,
+    stateMutability: "nonpayable",
     type: "function"
   },
   {
@@ -36,21 +154,6 @@ export const CONTRACT_ABI = [
       }
     ],
     name: "createProject",
-    outputs: [],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function"
-  },
-  {
-    constant: false,
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_projectId",
-        type: "uint256"
-      }
-    ],
-    name: "verifyProject",
     outputs: [],
     payable: false,
     stateMutability: "nonpayable",
@@ -105,108 +208,5 @@ export const CONTRACT_ABI = [
     ],
     name: "projectStateChanged",
     type: "event"
-  },
-  {
-    constant: true,
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_projectId",
-        type: "uint256"
-      }
-    ],
-    name: "getMoneyFunded",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256"
-      }
-    ],
-    payable: false,
-    stateMutability: "view",
-    type: "function"
-  },
-  {
-    constant: true,
-    inputs: [],
-    name: "getProjectCount",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256"
-      }
-    ],
-    payable: false,
-    stateMutability: "view",
-    type: "function"
-  },
-  {
-    constant: true,
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256"
-      }
-    ],
-    name: "projects",
-    outputs: [
-      {
-        internalType: "string",
-        name: "name",
-        type: "string"
-      },
-      {
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256"
-      },
-      {
-        internalType: "uint256",
-        name: "creationDate",
-        type: "uint256"
-      },
-      {
-        internalType: "uint256",
-        name: "endDate",
-        type: "uint256"
-      },
-      {
-        internalType: "enum ProjectFactory.States",
-        name: "state",
-        type: "uint8"
-      },
-      {
-        internalType: "uint256",
-        name: "moneyFunded",
-        type: "uint256"
-      }
-    ],
-    payable: false,
-    stateMutability: "view",
-    type: "function"
-  },
-  {
-    constant: true,
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256"
-      }
-    ],
-    name: "projectsToOwner",
-    outputs: [
-      {
-        internalType: "address payable",
-        name: "",
-        type: "address"
-      }
-    ],
-    payable: false,
-    stateMutability: "view",
-    type: "function"
   }
 ];
