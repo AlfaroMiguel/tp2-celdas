@@ -85,7 +85,6 @@ class ListOfProjects extends Component {
   }
 
   handleOnClickSend = async index => {
-    console.log("send", index);
     this.setState({ sendModalOpen: true, index });
     // await window.contract.methods
     //   .contribute(index, 1)
@@ -141,11 +140,12 @@ class ListOfProjects extends Component {
   handleSubmit = async amount => {
     const index = this.state.index;
 
+    this.setState({
+      ...this.state,
+      sendModalOpen: false
+    });
+
     if (!amount) {
-      this.setState({
-        ...this.state,
-        sendModalOpen: false
-      });
       return;
     }
 
@@ -190,7 +190,7 @@ class ListOfProjects extends Component {
               icon: "save",
               tooltip: "Save User",
               onClick: (event, rowData) => {
-                this.handleOnClickSend(event);
+                this.handleOnClickSend(rowData.index);
               }
             }
           ]}
