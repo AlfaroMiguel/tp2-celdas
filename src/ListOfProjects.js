@@ -150,7 +150,7 @@ class ListOfProjects extends Component {
 
     await window.contract.methods
       .contribute(index, amount)
-      .send({ from: window.account, gas: 5000000 });
+      .send({ from: window.account, gas: 5000000, value: 10000 });
 
     await this.loadProjectsData();
     this.setState({
