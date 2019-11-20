@@ -194,8 +194,15 @@ class ListOfProjects extends Component {
             {
               icon: "save",
               tooltip: "Save User",
-              onClick: (event, rowData) => {
+              onClick: (_, rowData) => {
                 this.handleOnClickSend(rowData.index);
+              }
+            },
+            {
+              icon: "audit",
+              tooltip: "audit",
+              onClick: (_, rowData) => {
+                this.audit(rowData.index);
               }
             }
           ]}
