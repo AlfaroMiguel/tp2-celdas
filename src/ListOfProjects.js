@@ -72,7 +72,7 @@ class ListOfProjects extends Component {
     if (projectCount === 0) {
       indexes = [];
     } else {
-      indexes = Array.from(Array(projectCount - 1), (_, index) => index);
+      indexes = Array.from(Array(projectCount), (_, index) => index);
     }
     const promises = indexes.map(async index => {
       const project = await window.contract.methods.projects(index).call();

@@ -1,4 +1,4 @@
-export const CONTRACT_ADDRESS = "0x00d7Fb7d56DcE3c40EF1BdE31aef6218a8Cfa279";
+export const CONTRACT_ADDRESS = "0x8d79be8Aec5807df7F186f77f04E8C9b4661BC3C";
 
 export const CONTRACT_ABI = [
   {
@@ -101,6 +101,27 @@ export const CONTRACT_ABI = [
     outputs: [],
     payable: true,
     stateMutability: "payable",
+    type: "function"
+  },
+  {
+    constant: true,
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_projectId",
+        type: "uint256"
+      }
+    ],
+    name: "getProjectOwner",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address"
+      }
+    ],
+    payable: false,
+    stateMutability: "view",
     type: "function"
   },
   {
