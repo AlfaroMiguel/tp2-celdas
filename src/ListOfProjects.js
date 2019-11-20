@@ -2,13 +2,14 @@ import React, { Component } from "react";
 import { withStyles } from "@material-ui/styles";
 
 // Material imports
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
+import MaterialTable from "material-table";
+// import Table from "@material-ui/core/Table";
+// import TableBody from "@material-ui/core/TableBody";
+// import TableCell from "@material-ui/core/TableCell";
+// import TableHead from "@material-ui/core/TableHead";
+// import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
-import Button from "@material-ui/core/Button";
+// import Button from "@material-ui/core/Button";
 import SendDialog from "./SendDialog";
 
 const styles = theme => ({
@@ -139,10 +140,14 @@ class ListOfProjects extends Component {
 
   handleSubmit = async amount => {
     const index = this.state.index;
-    this.setState({
-      ...this.state,
-      sendModalOpen: false
-    });
+
+    if (!amount) {
+      this.setState({
+        ...this.state,
+        sendModalOpen: false
+      });
+      return;
+    }
 
     await window.contract.methods
       .contribute(index, amount)
@@ -170,49 +175,31 @@ class ListOfProjects extends Component {
     return (
       <Paper className={classes.root}>
         {this.renderSendModal()}
-        <Table className={classes.table} aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell>Project Name</TableCell>
-              <TableCell align="right">Created date</TableCell>
-              <TableCell align="right">End date</TableCell>
-              <TableCell align="right">Requested</TableCell>
-              <TableCell align="right">Obtained</TableCell>
-              <TableCell align="right">State</TableCell>
-              <TableCell align="left">Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows &&
-              rows.map(row => (
-                <TableRow key={row.name}>
-                  <TableCell component="th" scope="row">
-                    {row.name}
-                  </TableCell>
-                  <TableCell align="right">{row.created}</TableCell>
-                  <TableCell align="right">{row.end}</TableCell>
-                  <TableCell align="right">{row.requested}</TableCell>
-                  <TableCell align="right">{row.obtained}</TableCell>
-                  <TableCell align="right">{row.state}</TableCell>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    className={classes.button}
-                    onClick={this.handleOnClickSend}
-                  >
-                    Send
-                  </Button>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    className={classes.button}
-                  >
-                    Audit
-                  </Button>
-                </TableRow>
-              ))}
-          </TableBody>
-        </Table>
+        <MaterialTable
+          title="Projects"
+          columns={[
+            { title: "Created date", field: "created" },
+            { title: "End date", field: "end" },
+            { title: "Requested", field: "requested" },
+            { title: "Obtained", field: "obtained" },
+            { title: "State", field: "state" }
+            // {title:"Actions", field:},
+          ]}
+          actions={[
+            {
+              icon: "save",
+              tooltip: "Save User",
+              onClick: (event, rowData) => {
+                this.handleOnClickSend(event);
+              }
+            }
+          ]}
+          data={rows}
+          options={{
+            search: false,
+            paging: false
+          }}
+        />
       </Paper>
     );
   }
