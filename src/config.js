@@ -1,4 +1,4 @@
-export const CONTRACT_ADDRESS = "0x6d806ee3620bf446526Af99CD7567D2619d8fd3d";
+export const CONTRACT_ADDRESS = "0x00d7Fb7d56DcE3c40EF1BdE31aef6218a8Cfa279";
 
 export const CONTRACT_ABI = [
   {
@@ -89,6 +89,11 @@ export const CONTRACT_ABI = [
       {
         internalType: "uint256",
         name: "_projectId",
+        type: "uint256"
+      },
+      {
+        internalType: "uint256",
+        name: "_amount",
         type: "uint256"
       }
     ],

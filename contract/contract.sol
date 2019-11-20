@@ -37,9 +37,9 @@ contract ProjectFactory {
         emit newProject(id, _name, _amount);
     }
 
-    function contribute(uint _projectId) public payable {
+    function contribute(uint _projectId, uint _amount) public payable {
         address payable contributor = msg.sender;
-        uint amountFunded = msg.value;
+        uint amountFunded = _amount;
 
         Project storage project = projects[_projectId];
         if(project.contributors[contributor] == 0) {

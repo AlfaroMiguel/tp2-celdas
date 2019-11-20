@@ -85,7 +85,7 @@ class ListOfProjects extends Component {
 
   handleOnClickSend = async index => {
     console.log("send", index);
-    this.setState({ sendModalOpen: true });
+    this.setState({ sendModalOpen: true, index });
     // await window.contract.methods
     //   .contribute(index, 1)
     //   .send({ from: window.account, gas: 5000000 });
@@ -137,13 +137,16 @@ class ListOfProjects extends Component {
     });
   };
 
-  handleSubmit = amount => {
+  handleSubmit = async amount => {
+    const index = this.state.index;
     this.setState({
       ...this.state,
       sendModalOpen: false
     });
 
-    // AGREGA EL CODIGO DE SEND ACA
+    await window.contract.methods
+      .contribute(index, amount)
+      .send({ from: window.account, gas: 5000000 });
   };
 
   renderSendModal() {
