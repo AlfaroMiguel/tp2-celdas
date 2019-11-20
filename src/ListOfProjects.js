@@ -140,18 +140,23 @@ class ListOfProjects extends Component {
   handleSubmit = async amount => {
     const index = this.state.index;
 
-    this.setState({
-      ...this.state,
-      sendModalOpen: false
-    });
-
     if (!amount) {
+      this.setState({
+        ...this.state,
+        sendModalOpen: false
+      });
       return;
     }
 
     await window.contract.methods
       .contribute(index, amount)
       .send({ from: window.account, gas: 5000000 });
+
+    await this.loadProjectsData();
+    this.setState({
+      ...this.state,
+      sendModalOpen: false
+    });
   };
 
   renderSendModal() {
